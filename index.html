@@ -3,17 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>なたぴ</title>
+    <title>みゃん</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
             background-color: #f0f0f0;
-            background-image: url(9592.jpg);
+            background-image: url(KURIFACE.jpg);
         }
         .game-container {
             width: 400px;
@@ -21,7 +22,7 @@
             border: 2px solid #000;
             position: relative;
             background-color: #fff;
-            background-image: url(39676.jpg);
+            background-image: url(KURIFACE.jpg);
         }
         .player {
             width: 30px;
@@ -60,6 +61,32 @@
             color: red;
             display: none;
         }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .button-row {
+            display: flex;
+            justify-content: center;
+            margin: 5px;
+        }
+        .control-button {
+            width: 50px;
+            height: 50px;
+            margin: 5px;
+            background-color: #ddd;
+            border: 2px solid #aaa;
+            border-radius: 5px;
+            font-size: 20px;
+            text-align: center;
+            line-height: 50px;
+            user-select: none;
+        }
+        .control-button:active {
+            background-color: #bbb;
+        }
     </style>
 </head>
 <body>
@@ -69,7 +96,7 @@
     <div class="goal" id="goal"></div>
     <div class="wall" id="wall1" style="top: 100px; left: 100px;"></div>
     <div class="wall" id="wall2" style="top: 200px; left: 100px;"></div>
-    <div class="wall" id="wall3" style="top: 320px; left: 100px;"></div> 
+    <div class="wall" id="wall3" style="top: 320px; left: 100px;"></div>
     <div class="enemy" style="top: 150px; left: 150px;"></div>
     <div class="enemy" style="top: 50px; left: 250px;"></div>
     <div class="enemy" style="top: 300px; left: 100px;"></div>
@@ -81,10 +108,18 @@
     <div class="enemy" style="top: 250px; left: 50px;"></div>
     <div class="enemy" style="top: 350px; left: 150px;"></div>
     <div class="enemy" style="top: 10px; left: 300px;"></div>
+    <div id="message">お前早く勉強しろ</div>
+</div>
 
-
-
-    <div id="message">なたぴー誕生日おめでとう</div>
+<div class="controls">
+    <div class="button-row">
+        <div class="control-button" id="up">↑</div>
+    </div>
+    <div class="button-row">
+        <div class="control-button" id="left">←</div>
+        <div class="control-button" id="down">↓</div>
+        <div class="control-button" id="right">→</div>
+    </div>
 </div>
 
 <script>
@@ -104,30 +139,24 @@
     let wallDirection = 1;  
     let wallPositions = [100, 100, 100];  
 
-    document.addEventListener('keydown', movePlayer);
+    document.getElementById('up').addEventListener('click', () => movePlayer('up'));
+    document.getElementById('down').addEventListener('click', () => movePlayer('down'));
+    document.getElementById('left').addEventListener('click', () => movePlayer('left'));
+    document.getElementById('right').addEventListener('click', () => movePlayer('right'));
 
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'ArrowUp') movePlayer('up');
+        if (event.key === 'ArrowDown') movePlayer('down');
+        if (event.key === 'ArrowLeft') movePlayer('left');
+        if (event.key === 'ArrowRight') movePlayer('right');
+    });
 
-    function moveWalls() {
-        for (let i = 0; i < walls.length; i++) {
-           
-            wallPositions[i] += wallSpeed * wallDirection;
+    function movePlayer(direction) {
+        if (direction === 'up') playerPosition.y -= 15;
+        if (direction === 'down') playerPosition.y += 15;
+        if (direction === 'left') playerPosition.x -= 15;
+        if (direction === 'right') playerPosition.x += 15;
 
-            
-            if (wallPositions[i] >= 340 || wallPositions[i] <= 0) {
-                wallDirection *= -1;
-            }
-
-            walls[i].style.left = wallPositions[i] + 'px';
-        }
-    }
-
-    function movePlayer(event) {
-        if (event.key === 'ArrowUp') playerPosition.y -= 10;
-        if (event.key === 'ArrowDown') playerPosition.y += 10;
-        if (event.key === 'ArrowLeft') playerPosition.x -= 10;
-        if (event.key === 'ArrowRight') playerPosition.x += 10;
-
-        
         if (playerPosition.x < 0) playerPosition.x = 0;
         if (playerPosition.x > 370) playerPosition.x = 370;
         if (playerPosition.y < 0) playerPosition.y = 0;
@@ -140,12 +169,10 @@
     }
 
     function checkCollisions() {
-        
         if (Math.abs(playerPosition.x - goalPosition.x) < 40 && Math.abs(playerPosition.y - goalPosition.y) < 40) {
             message.style.display = 'block';
         }
 
-        
         walls.forEach(wall => {
             let wallPosition = wall.getBoundingClientRect();
             let playerPositionRect = player.getBoundingClientRect();
@@ -176,9 +203,17 @@
         player.style.top = playerPosition.y + 'px';
     }
 
-    
-    setInterval(moveWalls, 20);
+    function moveWalls() {
+        for (let i = 0; i < walls.length; i++) {
+            wallPositions[i] += wallSpeed * wallDirection;
+            if (wallPositions[i] >= 340 || wallPositions[i] <= 0) {
+                wallDirection *= -1;
+            }
+            walls[i].style.left = wallPositions[i] + 'px';
+        }
+    }
 
+    setInterval(moveWalls, 9);
 </script>
 
 </body>
